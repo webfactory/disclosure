@@ -1,0 +1,14 @@
+{
+  "name": "webfactory-disclosure",
+  "version": "1.0.0",
+  "description": "A jQuery plugin for enhancement of predefined markup with accessible and keyboard-enabled reveal/hide functionality.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webfactory/disclosure.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/webfactory/disclosure/issues"
+  },
+  "homepage": "https://github.com/webfactory/disclosure#readme"
+}
