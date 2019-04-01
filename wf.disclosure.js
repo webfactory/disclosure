@@ -140,9 +140,5 @@
             counter++;
         }
     });
-
-    $.wfDisclosure({
-        buttonStylingClass: 'button sob-ausklappbarer-abschnitt__button'
-    });
-
+    
 })(jQuery);
