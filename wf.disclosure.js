@@ -67,6 +67,7 @@
                 buttonStylingClass: 'wf-disclosure__button',
                 buttonTextDisclose: 'mehr lesen',
                 buttonTextHide: 'weniger lesen',
+                buttonPositionBelow: true, // für BC; BITV 1.3.2a hätte besser "false", d. h. Button *vor* dem Inhalt
                 animateMaxHeight: false
             };
 
@@ -119,7 +120,11 @@
                 $panel.attr('aria-labelledby', buttonId);
 
                 // Setze Button ins DOM ein
-                $disclosure.append($button);
+                if (settings.buttonPositionBelow) {
+                    $disclosure.append($button);
+                } else {
+                    $button.insertBefore($panel);
+                }
 
                 // Aktualisiere ARIA states bei Klick/Tap
                 $button.on('click', function (event) {
