@@ -96,7 +96,7 @@
                     settings.buttonTextHide = $disclosure.data('text-hide');
                 }
 
-                var $button = $('<button class="' + settings.buttonStylingClass + '">' + settings.buttonTextDisclose + '</button>');
+                var $button = $('<button type="button" class="' + settings.buttonStylingClass + '">' + settings.buttonTextDisclose + '</button>');
 
                 // Berechne und setze inline max-height Style für CSS Animation falls gewünscht
                 if (settings.animateMaxHeight) {
