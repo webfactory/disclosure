@@ -86,17 +86,19 @@
             $disclosures.each(function (index, disclosure) {
                 var $disclosure = $(disclosure);
                 var $panel = $disclosure.find(settings.disclosurePanel);
+                var buttonTextDisclose = settings.buttonTextDisclose;
+                var buttonTextHide = settings.buttonTextHide;
 
                 // Nutze custom Buttontext soweit definiert
                 if ($disclosure.data('text-disclose')) {
-                    settings.buttonTextDisclose = $disclosure.data('text-disclose');
+                    buttonTextDisclose = $disclosure.data('text-disclose');
                 }
 
                 if ($disclosure.data('text-hide')) {
-                    settings.buttonTextHide = $disclosure.data('text-hide');
+                    buttonTextHide = $disclosure.data('text-hide');
                 }
 
-                var $button = $('<button type="button" class="' + settings.buttonStylingClass + '">' + settings.buttonTextDisclose + '</button>');
+                var $button = $('<button type="button" class="' + settings.buttonStylingClass + '">' + buttonTextDisclose + '</button>');
 
                 // Berechne und setze inline max-height Style für CSS Animation falls gewünscht
                 if (settings.animateMaxHeight) {
@@ -134,9 +136,9 @@
                     $target.attr('aria-expanded', state);
                     $('#' + $target.attr('aria-controls')).attr('aria-hidden', !state);
                     if (state) {
-                        $target.text(settings.buttonTextHide);
+                        $target.text(buttonTextHide);
                     } else {
-                        $target.text(settings.buttonTextDisclose);
+                        $target.text(buttonTextDisclose);
                     }
                 });
             });
@@ -145,5 +147,5 @@
             counter++;
         }
     });
-    
+
 })(jQuery);
