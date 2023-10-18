@@ -15,7 +15,7 @@
  * - eigene Button-Texte können in Templates via data-Attribut übergeben werden, z.B. so:
  *   <div class="wf-disclosure js-disclosure" data-text-disclose="{{ 'akkordeon.mehrLesen'|trans|striptags }}" data-text-hide="{{ 'akkordeon.wenigerLesen' |trans|striptags }}">
  *   Wichtig: in mehrsprachigen Projekten am besten mit Messages arbeiten!
- *
+ * - die Position des Buttons (vor oder nach dem ausklappenden Panel) kann via `data-button-position-below` als boolean übergeben werden.
  * - Das Plugin unterstützt eine Ausfahranimation via CSS-Transition der max-height Eigenschaft mit Berechnung und
  *   Setzen der ausgeklappten max-height, wenn die Option useInlineMaxHeight übergeben wird (default: false)
  *
