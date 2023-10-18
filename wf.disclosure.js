@@ -1,5 +1,5 @@
 /**
- * disclosure.js
+ * wf.disclosure.js
  * @file jQuery Plugin zum Anreichern von vordefiniertem Markup mit Aus- bzw. Einklappfunktion
  * (barrierearm und inkl. Tastaturunterstützung)
  *
@@ -86,17 +86,11 @@
             $disclosures.each(function (index, disclosure) {
                 var $disclosure = $(disclosure);
                 var $panel = $disclosure.find(settings.disclosurePanel);
-                var buttonTextDisclose = settings.buttonTextDisclose;
-                var buttonTextHide = settings.buttonTextHide;
 
-                // Nutze custom Buttontext soweit definiert
-                if ($disclosure.data('text-disclose')) {
-                    buttonTextDisclose = $disclosure.data('text-disclose');
-                }
-
-                if ($disclosure.data('text-hide')) {
-                    buttonTextHide = $disclosure.data('text-hide');
-                }
+                // Werte optionale data-Attribute widget-spezifisch aus
+                var buttonTextDisclose = $disclosure.data('text-disclose') ?? settings.buttonTextDisclose;
+                var buttonTextHide = $disclosure.data('text-hide') ?? settings.buttonTextHide;
+                var buttonPositionBelow = $disclosure.data('button-position-below') ?? settings.buttonPositionBelow;
 
                 var $button = $('<button type="button" class="' + settings.buttonStylingClass + '">' + buttonTextDisclose + '</button>');
 
@@ -122,7 +116,7 @@
                 $panel.attr('aria-labelledby', buttonId);
 
                 // Setze Button ins DOM ein
-                if (settings.buttonPositionBelow) {
+                if (buttonPositionBelow) {
                     $disclosure.append($button);
                 } else {
                     $button.insertBefore($panel);
