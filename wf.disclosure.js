@@ -1,6 +1,6 @@
 /**
  * wf.disclosure.js
- * @file jQuery Plugin zum Anreichern von vordefiniertem Markup mit Aus- bzw. Einklappfunktion
+ * @file Plugin zum Anreichern von vordefiniertem Markup mit Aus- bzw. Einklappfunktion
  * (barrierearm und inkl. Tastaturunterstützung)
  *
  * @example Benötigtes HTML:
@@ -18,6 +18,7 @@
  * - die Position des Buttons (vor oder nach dem ausklappenden Panel) kann via `data-button-position-below` als boolean übergeben werden.
  * - Das Plugin unterstützt eine Ausfahranimation via CSS-Transition der max-height Eigenschaft mit Berechnung und
  *   Setzen der ausgeklappten max-height, wenn die Option useInlineMaxHeight übergeben wird (default: false)
+ * - ESM import mit `import {wfDisclosure} from "webfactory-disclosure/wf.disclosure";`
  *
  *   Ein Beispiel SCSS-Snippet für diese Animation:
  *
@@ -43,103 +44,79 @@
  * - Die vom Plugin erzeugten Button-Elemente folgen der normalen Tab ⇥ Reihenfolge
  * - Die Buttons reagieren auf Leertaste und Enter ↵, um ein Panel zu öffnen bzw. zu schließen
  */
-(function($) {
-    'use strict';
+let counter = 0;
 
-    /**
-     * Erzeuge Counter zur Erstellung eindeutiger IDs
-     * @type {number}
-     */
-    var counter = 0;
+export function wfDisclosure(options = {}) {
+    const defaults = {
+        context: 'body',
+        disclosure: '.js-disclosure',
+        disclosureTeaser: '.js-disclosure__teaser',
+        disclosurePanel: '.js-disclosure__panel',
+        buttonStylingClass: 'wf-disclosure__button',
+        buttonTextDisclose: 'mehr lesen',
+        buttonTextHide: 'weniger lesen',
+        buttonPositionBelow: true,
+        animateMaxHeight: false
+    };
 
-    /**
-     * wfDisclosure Plugin Definition
-     * @param {Object} [options]
-     */
-    $.extend({
-        wfDisclosure: function (options) {
+    if (document.documentElement.lang === 'en' || document.documentElement.lang === 'EN') {
+        defaults.buttonTextDisclose = 'read more';
+        defaults.buttonTextHide = 'show less';
+    }
 
-            var defaults = {
-                context: 'body',
-                disclosure: '.js-disclosure',
-                disclosureTeaser: '.js-disclosure__teaser',
-                disclosurePanel: '.js-disclosure__panel',
-                buttonStylingClass: 'wf-disclosure__button',
-                buttonTextDisclose: 'mehr lesen',
-                buttonTextHide: 'weniger lesen',
-                buttonPositionBelow: true, // für BC; BITV 1.3.2a hätte besser "false", d. h. Button *vor* dem Inhalt
-                animateMaxHeight: false
-            };
+    const settings = { ...defaults, ...options };
+    const rootElement = document.querySelector(settings.context);
+    const disclosures = rootElement.querySelectorAll(settings.disclosure);
 
-            // Definiere sprachabhängige default Buttontexte
-            if (document.documentElement.lang === 'en' || document.documentElement.lang === 'EN') {
-                defaults.buttonTextDisclose = 'read more';
-                defaults.buttonTextHide = 'show less';
-            }
+    disclosures.forEach((disclosure, index) => {
+        const panel = disclosure.querySelector(settings.disclosurePanel);
+        const teaser = disclosure.querySelector(settings.disclosureTeaser);
 
-            // Erzeuge settings aus defaults und ggf. übergebenen Optionsparametern
-            var settings = $.extend({}, defaults, options);
+        // Use data attributes for custom text
+        const textDisclose = disclosure.dataset.textDisclose || settings.buttonTextDisclose;
+        const textHide = disclosure.dataset.textHide || settings.buttonTextHide;
 
-            var $context = $(settings.context);
-            var $disclosures = $context.find(settings.disclosure);
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = settings.buttonStylingClass;
+        button.textContent = textDisclose;
+        button.setAttribute('aria-expanded', 'false');
 
-            $disclosures.each(function (index, disclosure) {
-                var $disclosure = $(disclosure);
-                var $panel = $disclosure.find(settings.disclosurePanel);
+        // Generate unique IDs
+        const buttonId = `disclosure-${counter}__teaser-${index}`;
+        const panelId = `disclosure-${counter}__panel-${index}`;
 
-                // Werte optionale data-Attribute widget-spezifisch aus
-                var buttonTextDisclose = $disclosure.data('text-disclose') ?? settings.buttonTextDisclose;
-                var buttonTextHide = $disclosure.data('text-hide') ?? settings.buttonTextHide;
-                var buttonPositionBelow = $disclosure.data('button-position-below') ?? settings.buttonPositionBelow;
+        button.id = buttonId;
+        panel.id = panelId;
+        panel.setAttribute('aria-hidden', 'true');
+        panel.setAttribute('aria-labelledby', buttonId);
+        button.setAttribute('aria-controls', panelId);
 
-                var $button = $('<button type="button" class="' + settings.buttonStylingClass + '">' + buttonTextDisclose + '</button>');
-
-                // Berechne und setze inline max-height Style für CSS Animation falls gewünscht
-                if (settings.animateMaxHeight) {
-                    var height = $panel.outerHeight();
-                    $panel.css('max-height', height);
-                }
-
-                // Enhance Trigger und Panel mit a11y Attributen
-                $button.attr('aria-expanded', false);
-                $panel.attr('aria-hidden', true);
-
-                // Erzeuge eindeutige IDs für a11y Beziehung
-                var buttonId = 'disclosure-' + counter + '__teaser-' + index;
-                var panelId = 'disclosure-' + counter + '__panel-' + index;
-
-                // Erzeuge a11y Beziehungen zwischen Header und Panel
-                $button.attr('aria-controls', panelId);
-                $panel.attr('id', panelId);
-
-                $button.attr('id', buttonId);
-                $panel.attr('aria-labelledby', buttonId);
-
-                // Setze Button ins DOM ein
-                if (buttonPositionBelow) {
-                    $disclosure.append($button);
-                } else {
-                    $button.insertBefore($panel);
-                }
-
-                // Aktualisiere ARIA states bei Klick/Tap
-                $button.on('click', function (event) {
-                    var $target = $(event.target);
-                    var state = $target.attr('aria-expanded') === 'false';
-
-                    $target.attr('aria-expanded', state);
-                    $('#' + $target.attr('aria-controls')).attr('aria-hidden', !state);
-                    if (state) {
-                        $target.text(buttonTextHide);
-                    } else {
-                        $target.text(buttonTextDisclose);
-                    }
-                });
-            });
-
-            // Jeder Aufruf des Plugins erhöht den Counter
-            counter++;
+        // Handle animation
+        if (settings.animateMaxHeight && panel.scrollHeight) {
+            panel.style.maxHeight = `${panel.scrollHeight}px`;
         }
+
+        // Insert button
+        if (settings.buttonPositionBelow) {
+            disclosure.appendChild(button);
+        } else {
+            panel.insertAdjacentElement('beforebegin', button);
+        }
+
+        // Click handler
+        button.addEventListener('click', () => {
+            const expanded = button.getAttribute('aria-expanded') === 'true';
+            button.setAttribute('aria-expanded', !expanded);
+            panel.setAttribute('aria-hidden', expanded);
+            button.textContent = expanded ? textDisclose : textHide;
+
+            // Optional animation handling
+            if (settings.animateMaxHeight) {
+                panel.style.maxHeight = expanded ? '0' : `${panel.scrollHeight}px`;
+            }
+        });
     });
 
-})(jQuery);
+    counter++;
+}

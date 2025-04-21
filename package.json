@@ -1,7 +1,7 @@
 {
   "name": "webfactory-disclosure",
-  "version": "2.2.0",
-  "description": "A jQuery plugin for enhancement of predefined markup with accessible and keyboard-enabled reveal/hide functionality.",
+  "version": "3.0.0",
+  "description": "A plugin for enhancement of predefined markup with accessible and keyboard-enabled reveal/hide functionality.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/webfactory/disclosure.git"
