@@ -55,7 +55,7 @@ export function wfDisclosure(options = {}) {
         buttonStylingClass: 'wf-disclosure__button',
         buttonTextDisclose: 'mehr lesen',
         buttonTextHide: 'weniger lesen',
-        buttonPositionBelow: true,
+        buttonPositionBelow: false, // Danger Zone: probable failure of WCAG 1.3.2 and 3.2.2 if the trigger is positioned below the disclosed content
         animateMaxHeight: false
     };
 
